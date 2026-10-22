@@ -1,0 +1,73 @@
+/* Custom Felt & Gold Patterns */
+.casino-bg {
+    background: radial-gradient(circle at center, #111e16 0%, #070c09 70%, #020403 100%);
+}
+
+.gold-gradient-text {
+    background: linear-gradient(135deg, #FFF9D2 0%, #FFD700 50%, #AA7C11 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gold-border {
+    border: 2px solid;
+    border-image: linear-gradient(to bottom right, #FFE57F, #AA7C11, #FFD700) 1;
+}
+
+.gold-btn {
+    background: linear-gradient(180deg, #FFE57F 0%, #D4AF37 50%, #AA7C11 100%);
+    color: #000;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.gold-btn:hover {
+    background: linear-gradient(180deg, #FFF9D2 0%, #FFD700 50%, #D4AF37 100%);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D4AF37;
+    border-radius: 2px;
+}
+
+/* Plate Container Shadows */
+.plate-container {
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0,0,0,0.8);
+}
+
+/* 3D Dice Styling */
+.dice {
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: inset 0 -3px 0 #bbb, inset 0 3px 0 #fff, 0 4px 8px rgba(0,0,0,0.5);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 5px;
+    position: relative;
+}
+
+.pip {
+    background-color: #111;
+    border-radius: 50%;
+    margin: auto;
+    width: 8px;
+    height: 8px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.5);
+}
+
+.pip-red {
+    background-color: #d92626;
+}

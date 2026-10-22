@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-950 text-slate-100 select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tài Xỉu VIP - Sòng Bài Macau</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Montserrat + Playfair Display) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            100: '#FFF9D2',
+                            300: '#FFE57F',
+                            500: '#FFD700',
+                            600: '#D4AF37',
+                            700: '#AA7C11',
+                            900: '#5B4300'
+                        },
+                        macau: {
+                            red: '#8B0000',
+                            brightRed: '#E60000',
+                            green: '#004D25',
+                            dark: '#0B0D12'
+                        }
+                    },
+                    animation: {
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) infinite',
+                        'glow': 'glow 1.5s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-2px, 2px, 0) rotate(-1deg)' },
+                            '20%, 80%': { transform: 'translate3d(3px, -2px, 0) rotate(2deg)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 3px, 0) rotate(-2deg)' },
+                            '40%, 60%': { transform: 'translate3d(4px, -3px, 0) rotate(1deg)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(255, 215, 0, 0.4)' },
+                            '100%': { boxShadow: '0 0 20px rgba(255, 215, 0, 0.9)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="h-full flex flex-col casino-bg text-slate-100 overflow-x-hidden font-sans">
+
+    <!-- Top Header Bar -->
+    <header class="bg-slate-900/90 border-b border-gold-600/40 px-3 py-2 flex items-center justify-between shadow-lg relative z-20">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-600 to-yellow-300 p-0.5 shadow-md flex items-center justify-center">
+                <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                    <i class="fa-solid font-bold text-amber-400 text-lg">🀄</i>
+                </div>
+            </div>
+            <div>
+                <h1 class="font-serif font-bold text-base md:text-lg leading-none gold-gradient-text">MACAU VIP</h1>
+                <p class="text-[10px] text-amber-300/70 tracking-widest uppercase">Tài Xỉu Thượng Hải</p>
+            </div>
+        </div>
+
+        <!-- Wallet Balance -->
+        <div class="bg-slate-950/80 border border-amber-500/40 rounded-full px-3 py-1 flex items-center space-x-2 shadow-inner">
+            <i class="fa-solid fa-coins text-amber-400 text-sm"></i>
+            <span id="user-balance" class="font-bold text-amber-300 text-sm md:text-base">1,000,000</span>
+            <button onclick="addFreeChips()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-full w-5 h-5 flex items-center justify-center text-xs transition ml-1" title="Nạp 500k miễn phí">+</button>
+        </div>
+
+        <!-- Audio & Stats Actions -->
+        <div class="flex items-center space-x-2">
+            <button id="sound-btn" onclick="toggleAudio()" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 hover:bg-slate-700">
+                <i id="sound-icon" class="fa-solid fa-volume-high text-xs"></i>
+            </button>
+            <button onclick="toggleModal('history-modal')" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 hover:bg-slate-700" title="Lịch sử cược">
+                <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Workspace -->
+    <main class="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto p-2 md:p-4 gap-3 overflow-y-auto">
+
+        <!-- Left Column: Soi Cầu AI & Live Chat -->
+        <aside class="w-full lg:w-80 flex flex-col gap-3 order-2 lg:order-1">
+            
+            <!-- AI Soi Cầu Box -->
+            <div class="bg-slate-900/80 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                    <span class="font-bold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-brain text-purple-400 animate-pulse"></i> AI Soi Cầu 5★
+                    </span>
+                    <span id="ai-pattern-tag" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-semibold">Đang phân tích...</span>
+                </div>
+                
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between items-center text-slate-300">
+                        <span>Gợi ý cửa tiếp:</span>
+                        <span id="ai-recommendation" class="font-bold text-sm text-yellow-400">---</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
+                        <div id="ai-bar-tai" class="bg-red-600 h-full transition-all duration-500" style="width: 50%"></div>
+                        <div id="ai-bar-xiu" class="bg-blue-600 h-full transition-all duration-500" style="width: 50%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-400 font-bold">
+                        <span id="ai-percent-tai" class="text-red-400">TÀI: 50%</span>
+                        <span id="ai-percent-xiu" class="text-blue-400">XỈU: 50%</span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-4 gap-1 mt-3 pt-2 border-t border-slate-800/80 text-center text-[10px]">
+                    <div class="bg-slate-950/60 p-1 rounded border border-slate-800">
+                        <div class="text-slate-400">Tài</div>
+                        <div id="stat-tai-count" class="font-bold text-red-400">0</div>
+                    </div>
+                    <div class="bg-slate-950/60 p-1 rounded border border-slate-800">
+                        <div class="text-slate-400">Xỉu</div>
+                        <div id="stat-xiu-count" class="font-bold text-blue-400">0</div>
+                    </div>
+                    <div class="bg-slate-950/60 p-1 rounded border border-slate-800">
+                        <div class="text-slate-400">Bão</div>
+                        <div id="stat-bao-count" class="font-bold text-amber-400">0</div>
+                    </div>
+                    <div class="bg-slate-950/60 p-1 rounded border border-slate-800">
+                        <div class="text-slate-400">Bệt Max</div>
+                        <div id="stat-max-streak" class="font-bold text-purple-400">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fake Live Chat Box -->
+            <div class="bg-slate-900/80 border border-amber-500/20 rounded-xl p-3 shadow-xl backdrop-blur-md flex-1 flex flex-col min-h-[220px] max-h-[320px] lg:max-h-none">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                    <span class="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-comments text-emerald-400"></i> Trực Tuyến (<span id="online-users" class="text-emerald-400">1,248</span>)
+                    </span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                </div>
+                
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-2 text-xs pr-1 font-sans">
+                    <!-- Chat rows dynamically added here -->
+                </div>
+
+                <form onsubmit="handleUserChat(event)" class="mt-2 flex gap-1 pt-2 border-t border-slate-800">
+                    <input id="chat-input" type="text" placeholder="Trò chuyện hoặc bình luận..." class="flex-1 bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-amber-500" maxLength="60">
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-3 rounded text-xs">Gửi</button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Middle Column: Main Table, Bowl & Dice Canvas, Bet Options -->
+        <section class="flex-1 flex flex-col items-center gap-3 order-1 lg:order-2">
+
+            <!-- Bowl Plate Stage -->
+            <div class="relative w-full max-w-lg aspect-[16/11] bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl border-2 border-amber-600/50 shadow-2xl flex flex-col items-center justify-center p-2 overflow-hidden">
+                
+                <!-- Macau Decorative Table Trim -->
+                <div class="absolute inset-2 border border-amber-500/20 rounded-xl pointer-events-none"></div>
+                <div class="absolute top-3 left-4 text-[10px] text-amber-500/60 tracking-widest font-serif uppercase">PHIÊN: #<span id="session-id">104928</span></div>
+                
+                <!-- Status & Timer Indicator -->
+                <div id="game-status-badge" class="absolute top-3 right-4 bg-amber-500/20 border border-amber-500/50 text-amber-300 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider">
+                    ĐẶT CƯỢC (<span id="timer-count" class="text-white text-sm font-extrabold">20</span>s)
+                </div>
+
+                <!-- Macau Plate Center Outer Ring -->
+                <div class="plate-container w-64 h-64 md:w-72 md:h-72 rounded-full bg-gradient-to-b from-amber-700 via-amber-900 to-yellow-950 p-3 flex items-center justify-center relative shadow-2xl border-4 border-amber-500/80">
+                    <!-- Inner Ceramic Plate -->
+                    <div class="w-full h-full rounded-full bg-slate-950 border-4 border-amber-300/40 flex items-center justify-center relative overflow-hidden shadow-inner">
+                        <!-- Plate Pattern Background -->
+                        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffd700_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                        
+                        <!-- Dice Under the Bowl -->
+                        <div id="dice-container" class="flex gap-2 items-center justify-center z-0">
+                            <div id="dice-1" class="dice"></div>
+                            <div id="dice-2" class="dice"></div>
+                            <div id="dice-3" class="dice"></div>
+                        </div>
+
+                        <!-- Total Score Display Floating when Bowl Revealed -->
+                        <div id="result-overlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-opacity duration-300 opacity-0 pointer-events-none">
+                            <span id="result-sum" class="text-4xl font-extrabold gold-gradient-text drop-shadow">11</span>
+                            <span id="result-text" class="text-base font-bold text-red-500 uppercase tracking-widest mt-1">TÀI</span>
+                        </div>
+
+                        <!-- 360 Degree Interactive Draggable Bowl -->
+                        <div id="bowl" class="absolute inset-0 rounded-full bg-gradient-to-b from-amber-800 via-yellow-950 to-amber-950 border-4 border-amber-400 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing z-20 transition-transform duration-100 ease-out shadow-2xl" style="touch-action: none;">
+                            <div class="w-24 h-24 rounded-full border-2 border-amber-400/50 flex flex-col items-center justify-center bg-amber-950/60 shadow-inner">
+                                <i class="fa-solid fa-dragon text-amber-400 text-3xl drop-shadow"></i>
+                                <span class="text-[9px] text-amber-300/80 font-serif mt-1 font-bold tracking-widest">VUỐT MỞ</span>
+                            </div>
+                            <div class="absolute inset-2 border border-dashed border-amber-300/30 rounded-full animate-spin-slow pointer-events-none"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Quick Open Bowl Button -->
+                <button id="quick-open-btn" onclick="quickOpenBowl()" class="mt-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 px-4 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1.5 opacity-0 pointer-events-none">
+                    <i class="fa-solid fa-hand-pointer"></i> Mở Nhanh
+                </button>
+            </div>
+
+            <!-- Primary Betting Board Layout -->
+            <div class="w-full space-y-2">
+                
+                <!-- Main Options: TÀI vs XỈU -->
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- XỈU Button Area -->
+                    <button onclick="placeBet('XIU')" class="relative group bg-slate-900 border-2 border-blue-600/60 hover:border-blue-400 rounded-xl p-3 flex flex-col items-center justify-between shadow-lg transition active:scale-95 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-blue-600/10 to-transparent group-hover:from-blue-600/20"></div>
+                        <div class="flex justify-between w-full text-xs font-bold text-blue-400 z-10">
+                            <span>XỈU (4 - 10)</span>
+                            <span>1 : 0.9</span>
+                        </div>
+                        <div class="my-1 text-3xl font-black text-blue-400 tracking-wider z-10">XỈU</div>
+                        <div class="text-[11px] text-slate-300 font-semibold z-10">
+                            Cược: <span id="bet-xiu-amount" class="text-amber-300 font-bold">0</span>
+                        </div>
+                        <div id="win-glow-XIU" class="absolute inset-0 border-4 border-yellow-300 opacity-0 transition-opacity pointer-events-none"></div>
+                    </button>
+
+                    <!-- TÀI Button Area -->
+                    <button onclick="placeBet('TAI')" class="relative group bg-slate-900 border-2 border-red-600/60 hover:border-red-400 rounded-xl p-3 flex flex-col items-center justify-between shadow-lg transition active:scale-95 overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-red-600/10 to-transparent group-hover:from-red-600/20"></div>
+                        <div class="flex justify-between w-full text-xs font-bold text-red-400 z-10">
+                            <span>TÀI (11 - 17)</span>
+                            <span>1 : 0.9</span>
+                        </div>
+                        <div class="my-1 text-3xl font-black text-red-500 tracking-wider z-10">TÀI</div>
+                        <div class="text-[11px] text-slate-300 font-semibold z-10">
+                            Cược: <span id="bet-tai-amount" class="text-amber-300 font-bold">0</span>
+                        </div>
+                        <div id="win-glow-TAI" class="absolute inset-0 border-4 border-yellow-300 opacity-0 transition-opacity pointer-events-none"></div>
+                    </button>
+                </div>
+
+                <!-- High Odds Options: Bão & Single Dice Specifics -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="placeBet('BAO_ANY')" class="bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 p-2 rounded-lg text-center transition">
+                        <div class="text-[10px] font-bold text-amber-400">BÃO BẤT KỲ</div>
+                        <div class="text-xs font-extrabold text-amber-300 my-0.5">1 : 30</div>
+                        <div class="text-[10px] text-slate-400">Cược: <span id="bet-bao_any-amount" class="text-amber-300">0</span></div>
+                    </button>
+
+                    <button onclick="placeBet('BAO_EXACT')" class="bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 p-2 rounded-lg text-center transition">
+                        <div class="text-[10px] font-bold text-amber-400">BÃO CỤ THỂ (111..666)</div>
+                        <div class="text-xs font-extrabold text-amber-300 my-0.5">1 : 150</div>
+                        <div class="text-[10px] text-slate-400">Cược: <span id="bet-bao_exact-amount" class="text-amber-300">0</span></div>
+                    </button>
+
+                    <button onclick="toggleModal('sum-bet-modal')" class="bg-slate-900/90 border border-amber-500/40 hover:border-amber-400 p-2 rounded-lg text-center transition flex flex-col items-center justify-center">
+                        <div class="text-[10px] font-bold text-amber-400">CƯỢC TỔNG ĐIỂM</div>
+                        <div class="text-[11px] font-bold text-slate-300">4 đến 17</div>
+                        <div class="text-[9px] text-amber-300">Tỷ lệ lên tới 1:50</div>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Chip Selector Bar & Action Controls -->
+            <div class="w-full bg-slate-900/90 border border-amber-600/40 p-2 rounded-xl flex flex-col md:flex-row gap-2 items-center justify-between shadow-xl">
+                <!-- Chip Values -->
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto py-1 px-1">
+                    <button onclick="selectChip(1000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-slate-400 bg-slate-800 text-slate-200 shrink-0">1K</button>
+                    <button onclick="selectChip(5000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-blue-500 bg-blue-900 text-blue-200 shrink-0">5K</button>
+                    <button onclick="selectChip(10000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-green-500 bg-green-900 text-green-200 shrink-0">10K</button>
+                    <button onclick="selectChip(50000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-red-500 bg-red-900 text-red-200 shrink-0">50K</button>
+                    <button onclick="selectChip(100000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-purple-500 bg-purple-900 text-purple-200 shrink-0">100K</button>
+                    <button onclick="selectChip(500000)" class="chip-btn active-chip px-2.5 py-1 rounded-full text-xs font-bold border-2 border-amber-400 bg-amber-600 text-slate-950 shrink-0">500K</button>
+                    <button onclick="selectChip(1000000)" class="chip-btn px-2.5 py-1 rounded-full text-xs font-bold border-2 border-yellow-300 bg-yellow-500 text-slate-950 shrink-0">1M</button>
+                </div>
+
+                <!-- Action Utilities -->
+                <div class="flex items-center gap-1.5 w-full md:w-auto justify-end">
+                    <button onclick="doubleBet()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 font-semibold text-xs px-2.5 py-1.5 rounded-lg transition" title="X2 mức tiền cược hiện tại">
+                        X2 (Gấp đôi)
+                    </button>
+                    <button onclick="allIn()" class="bg-gradient-to-r from-red-600 to-amber-600 text-white font-bold text-xs px-2.5 py-1.5 rounded-lg transition shadow" title="Cược toàn bộ số dư">
+                        ALL-IN
+                    </button>
+                    <button onclick="clearBets()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-semibold text-xs px-2.5 py-1.5 rounded-lg transition">
+                        Đặt lại
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Bead Plate & Trend Graph -->
+        <aside class="w-full lg:w-80 flex flex-col gap-3 order-3">
+            
+            <!-- Matrix Bead Plate -->
+            <div class="bg-slate-900/80 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                    <span class="font-bold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-1">
+                        <i class="fa-solid fa-table-cells"></i> Cầu Giọt Nước
+                    </span>
+                    <span class="text-[10px] text-slate-400">6x11 Matrix</span>
+                </div>
+                
+                <div id="bead-plate-grid" class="grid grid-rows-6 grid-flow-col gap-1 bg-slate-950 p-2 rounded-lg border border-slate-800/80 aspect-[11/6] overflow-x-auto">
+                    <!-- Grid cells created dynamically by JS -->
+                </div>
+            </div>
+
+            <!-- Trend Line Chart -->
+            <div class="bg-slate-900/80 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md flex-1 flex flex-col">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                    <span class="font-bold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-1">
+                        <i class="fa-solid fa-chart-line"></i> Biểu Đồ Tổng Điểm
+                    </span>
+                    <span class="text-[10px] text-slate-400">(4 - 17 Điểm)</span>
+                </div>
+
+                <div class="flex-1 min-h-[140px] relative w-full bg-slate-950 rounded-lg p-1 border border-slate-800">
+                    <canvas id="trend-canvas" class="w-full h-full"></canvas>
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- Sum Bet Selection Modal -->
+    <div id="sum-bet-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-amber-500/50 rounded-xl p-4 max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+                <h3 class="font-bold text-sm text-amber-400">CƯỢC TỔNG ĐIỂM CHÍNH XÁC</h3>
+                <button onclick="toggleModal('sum-bet-modal')" class="text-slate-400 hover:text-white">&times;</button>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Dự đoán chính xác tổng 3 xí ngầu để nhận tỷ lệ thưởng cao:</p>
+            
+            <div class="grid grid-cols-4 gap-2 text-xs">
+                <button onclick="placeSumBet(4, 50)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">4 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:50</div>
+                </button>
+                <button onclick="placeSumBet(5, 30)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">5 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:30</div>
+                </button>
+                <button onclick="placeSumBet(6, 18)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">6 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:18</div>
+                </button>
+                <button onclick="placeSumBet(7, 12)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">7 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:12</div>
+                </button>
+                <button onclick="placeSumBet(8, 8)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">8 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:8</div>
+                </button>
+                <button onclick="placeSumBet(9, 6)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">9 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:6</div>
+                </button>
+                <button onclick="placeSumBet(10, 6)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">10 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:6</div>
+                </button>
+                <button onclick="placeSumBet(11, 6)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">11 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:6</div>
+                </button>
+                <button onclick="placeSumBet(12, 6)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">12 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:6</div>
+                </button>
+                <button onclick="placeSumBet(13, 8)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">13 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:8</div>
+                </button>
+                <button onclick="placeSumBet(14, 12)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">14 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:12</div>
+                </button>
+                <button onclick="placeSumBet(15, 18)" class="p-2 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 rounded text-center">
+                    <div class="font-bold text-amber-300">15 Điểm</div>
+                    <div class="text-[10px] text-slate-400">1:18</div>
+                </button>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button onclick="toggleModal('sum-bet-modal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-1.5 rounded text-xs">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bet History Modal -->
+    <div id="history-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-amber-500/50 rounded-xl p-4 max-w-lg w-full shadow-2xl flex flex-col max-h-[80vh]">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+                <h3 class="font-bold text-sm text-amber-400">LỊCH SỬ CƯỢC PHIÊN</h3>
+                <button onclick="toggleModal('history-modal')" class="text-slate-400 hover:text-white">&times;</button>
+            </div>
+            <div id="history-list" class="flex-1 overflow-y-auto space-y-2 text-xs pr-1">
+                <!-- History items appended here -->
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-800 flex justify-end">
+                <button onclick="toggleModal('history-modal')" class="bg-slate-800 text-slate-300 px-4 py-1 rounded text-xs">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Script -->
+    <script src="script.js"></script>
+</body>
+</html>
